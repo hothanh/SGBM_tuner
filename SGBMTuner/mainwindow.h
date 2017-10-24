@@ -1,3 +1,10 @@
+/*
+ *    Filename: mainwindow.h
+ *  Created on: Oct 24, 2017
+ *      Author: Timo Hinzmann, based on "vmarquet/opencv-disparity-map-tuner"
+ *   Institute: ETH Zurich, Autonomous Systems Lab
+ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -57,8 +64,9 @@ private:
     cv::Mat left_image;
     cv::Mat right_image;
 
-    // the object that holds the parameters for the block-matching algorithm
-    cv::StereoBM bmState;
+    // the object that holds the parameters for the semi-global
+    // block-matching algorithm
+    cv::StereoSGBM sgbm_;
 
     void compute_depth_map();  // compute depth map with OpenCV
 
