@@ -1,3 +1,10 @@
+/*
+ *    Filename: main.cc
+ *  Created on: Oct 24, 2017
+ *      Author: Timo Hinzmann, based on "vmarquet/opencv-disparity-map-tuner"
+ *   Institute: ETH Zurich, Autonomous Systems Lab
+ */
+
 #include "mainwindow.h"
 #include <QApplication>
 
