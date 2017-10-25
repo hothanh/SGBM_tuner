@@ -41,10 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSlider_disp_12_max_diff->setValue(sgbm_.disp12MaxDiff);
 
     sgbm_.P1 = 120;
-//    ui->horizontalSlider_p1->setValue(sgbm_.P1);
+    ui->horizontalSlider_P1->setValue(sgbm_.P1);
 
     sgbm_.P2 = 240;
- //   ui->horizontalSlider_p2->setValue(sgbm_.P2);
+    ui->horizontalSlider_P2->setValue(sgbm_.P2);
 
     sgbm_.fullDP = false;
 //    ui->horizontalSlider_p2->setValue(sgbm_.fullDP);
@@ -177,20 +177,6 @@ void MainWindow::compute_depth_map() {
 
 /////////////////// Sliders management (callbacks and constraints) //////////////////////
 
-///// pre filter size
-
-// must be an odd number
-void MainWindow::on_horizontalSlider_pre_filter_size_valueChanged(int value)
-{
-    if ((value % 2) == 0) {
-        value -= 1;
-        ui->horizontalSlider_pre_filter_size->setValue(value);
-    }
-
-    //sgbm_.preFilterSize = value;
-    compute_depth_map();
-}
-
 ///// pre filter cap
 
 void MainWindow::on_horizontalSlider_pre_filter_cap_valueChanged(int value)
@@ -265,14 +251,6 @@ void MainWindow::set_num_of_disparity_slider_to_multiple_16(int value) {
     compute_depth_map();
 }
 
-///// Texture threshold
-
-void MainWindow::on_horizontalSlider_texture_threshold_valueChanged(int value)
-{
-    //sgbm_.textureThreshold = value;
-    compute_depth_map();
-}
-
 ///// Uniqueness ratio
 
 void MainWindow::on_horizontalSlider_uniqueness_ratio_valueChanged(int value)
@@ -303,4 +281,29 @@ void MainWindow::on_horizontalSlider_disp_12_max_diff_valueChanged(int value)
 {
     sgbm_.disp12MaxDiff = value;
     compute_depth_map();
+}
+
+///// P1 Semi-global matching parameter
+/// The first parameter controlling the disparity smoothness.
+/// This parameter is used for the case of slanted surfaces (not fronto
+/// parallel).
+
+void MainWindow::on_horizontalSlider_P1_valueChanged(int value) {
+  sgbm_.P1 = value;
+  compute_depth_map();
+}
+
+///// P2 Semi-global matching parameter
+/// The second parameter controlling the disparity smoothness.This parameter
+/// is used for "solving" the depth discontinuities problem. The larger the
+/// values are, the smoother the disparity is. P1 is the penalty on the
+/// disparity change by plus or minus 1 between neighbor pixels. P2 is the
+/// penalty on the disparity change by more than 1 between neighbor pixels.
+/// The algorithm requires P2 > P1 . See stereo_match.cpp sample where some
+/// reasonably good P1 and P2 values are shown
+/// (like 8*number_of_image_channels*SADWindowSize*SADWindowSize and
+/// 32*number_of_image_channels*SADWindowSize*SADWindowSize , respectively).
+void MainWindow::on_horizontalSlider_P2_valueChanged(int value) {
+  sgbm_.P2 = value;
+  compute_depth_map();
 }
