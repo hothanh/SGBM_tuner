@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSlider_P2->setValue(sgbm_.P2);
 
     sgbm_.fullDP = false;
-//    ui->horizontalSlider_p2->setValue(sgbm_.fullDP);
+    ui->horizontalSlider_use_full_dp->setValue(sgbm_.fullDP);
 }
 
 MainWindow::~MainWindow()
@@ -305,5 +305,11 @@ void MainWindow::on_horizontalSlider_P1_valueChanged(int value) {
 /// 32*number_of_image_channels*SADWindowSize*SADWindowSize , respectively).
 void MainWindow::on_horizontalSlider_P2_valueChanged(int value) {
   sgbm_.P2 = value;
+  compute_depth_map();
+}
+
+
+void MainWindow::on_horizontalSlider_use_full_dp_valueChanged(int value) {
+  sgbm_.fullDP = value;
   compute_depth_map();
 }

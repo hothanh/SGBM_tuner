@@ -56,6 +56,8 @@ private slots:
 
     void on_horizontalSlider_P2_valueChanged(int value);
 
+    void on_horizontalSlider_use_full_dp_valueChanged(int value);
+
 private:
     // the UI object, to access the UI elements created with Qt Designer
     Ui::MainWindow *ui;

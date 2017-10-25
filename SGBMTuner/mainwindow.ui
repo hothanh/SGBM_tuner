@@ -138,6 +138,13 @@
           </property>
          </widget>
         </item>
+        <item row="9" column="2">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="2">
          <widget class="QLabel" name="label_3">
           <property name="text">
@@ -173,10 +180,10 @@
           </property>
          </widget>
         </item>
-        <item row="9" column="2">
-         <widget class="QLabel" name="label_9">
+        <item row="4" column="2">
+         <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>0</string>
+           <string>128</string>
           </property>
          </widget>
         </item>
@@ -190,10 +197,20 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="2">
-         <widget class="QLabel" name="label_5">
+        <item row="6" column="2">
+         <widget class="QLabel" name="label_13">
           <property name="text">
-           <string>128</string>
+           <string>240</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_uniqueness_ratio">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Margin in percentage by which the best (minimum) computed cost function value should “win” the second best value to consider the found match correct. Normally, a value within the 5-15 range is good enough.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Uniqueness ratio</string>
           </property>
          </widget>
         </item>
@@ -241,13 +258,10 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label_uniqueness_ratio">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Margin in percentage by which the best (minimum) computed cost function value should “win” the second best value to consider the found match correct. Normally, a value within the 5-15 range is good enough.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButton_left">
           <property name="text">
-           <string>Uniqueness ratio</string>
+           <string>Load left image</string>
           </property>
          </widget>
         </item>
@@ -255,13 +269,6 @@
          <widget class="QPushButton" name="pushButton_right">
           <property name="text">
            <string>Load right image</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton_left">
-          <property name="text">
-           <string>Load left image</string>
           </property>
          </widget>
         </item>
@@ -350,7 +357,7 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="0">
+        <item row="11" column="0">
          <widget class="QLabel" name="label_disp_12_max_diff">
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum allowed difference (in integer pixel units) in the left-right disparity check. Set it to a non-positive value to disable the check.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -360,7 +367,7 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="1">
+        <item row="11" column="1">
          <widget class="QSlider" name="horizontalSlider_disp_12_max_diff">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -382,7 +389,7 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="2">
+        <item row="11" column="2">
          <widget class="QLabel" name="label_10">
           <property name="text">
            <string>-1</string>
@@ -430,17 +437,34 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="2">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>240</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="2">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>31</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Use full DP?</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="2">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="1">
+         <widget class="QSlider" name="horizontalSlider_use_full_dp">
+          <property name="maximum">
+           <number>1</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -462,11 +486,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>403</x>
-     <y>166</y>
+     <y>131</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>166</y>
+     <y>131</y>
     </hint>
    </hints>
   </connection>
@@ -478,11 +502,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>430</x>
-     <y>236</y>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>236</y>
+     <y>201</y>
     </hint>
    </hints>
   </connection>
@@ -494,11 +518,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>402</x>
-     <y>201</y>
+     <y>166</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>201</y>
+     <y>166</y>
     </hint>
    </hints>
   </connection>
@@ -510,11 +534,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>432</x>
-     <y>271</y>
+     <y>236</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>271</y>
+     <y>236</y>
     </hint>
    </hints>
   </connection>
@@ -526,11 +550,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>273</x>
-     <y>367</y>
+     <y>332</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>376</y>
+     <y>341</y>
     </hint>
    </hints>
   </connection>
@@ -542,11 +566,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>276</x>
-     <y>467</y>
+     <y>432</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>481</y>
+     <y>446</y>
     </hint>
    </hints>
   </connection>
@@ -558,11 +582,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>289</x>
-     <y>428</y>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>446</y>
+     <y>411</y>
     </hint>
    </hints>
   </connection>
@@ -574,11 +598,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>288</x>
-     <y>403</y>
+     <y>368</y>
     </hint>
     <hint type="destinationlabel">
      <x>546</x>
-     <y>411</y>
+     <y>376</y>
     </hint>
    </hints>
   </connection>
@@ -589,12 +613,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>491</x>
-     <y>306</y>
+     <x>473</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
      <x>533</x>
-     <y>292</y>
+     <y>259</y>
     </hint>
    </hints>
   </connection>
@@ -606,11 +630,27 @@
    <hints>
     <hint type="sourcelabel">
      <x>314</x>
-     <y>327</y>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>533</x>
-     <y>327</y>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_use_full_dp</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_11</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>505</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>539</x>
+     <y>462</y>
     </hint>
    </hints>
   </connection>
