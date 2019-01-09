@@ -16,38 +16,39 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // The default values used in OpenCV are defined here:
     // https://github.com/Itseez/opencv/blob/master/modules/calib3d/src/stereobm.cpp
-    sgbm_.preFilterCap = 42;  // must be within 1 and 63
-    ui->horizontalSlider_pre_filter_cap->setValue(sgbm_.preFilterCap);
+	sgbm_ = cv::StereoSGBM::create(0, 16, 3);
+    sgbm_->setPreFilterCap(42);// = 42;  // must be within 1 and 63
+    ui->horizontalSlider_pre_filter_cap->setValue(sgbm_->getPreFilterCap());
 
-    sgbm_.SADWindowSize = 11;  // must be odd, be within 5..255 and be not larger than image width or height
-    ui->horizontalSlider_SAD_window_size->setValue(sgbm_.SADWindowSize);
+    sgbm_->setBlockSize(11);// = 11;  // must be odd, be within 5..255 and be not larger than image width or height
+    ui->horizontalSlider_SAD_window_size->setValue(sgbm_->getBlockSize());
 
-    sgbm_.minDisparity = -66;
-    ui->horizontalSlider_min_disparity->setValue(sgbm_.minDisparity);
+    sgbm_->setMinDisparity(0);// = -66;
+    ui->horizontalSlider_min_disparity->setValue(sgbm_->getMinDisparity());
 
-    sgbm_.numberOfDisparities = 128;  // must be > 0 and divisible by 16
-    ui->horizontalSlider_num_of_disparity->setValue(sgbm_.numberOfDisparities);
+    sgbm_->setNumDisparities(12);// = 128;  // must be > 0 and divisible by 16
+    ui->horizontalSlider_num_of_disparity->setValue(sgbm_->getNumDisparities());
 
-    sgbm_.uniquenessRatio = 15;  // must be non-negative
-    ui->horizontalSlider_uniqueness_ratio->setValue(sgbm_.uniquenessRatio);
+    sgbm_->setUniquenessRatio(15);// = 15;  // must be non-negative
+    ui->horizontalSlider_uniqueness_ratio->setValue(sgbm_->getUniquenessRatio());
 
-    sgbm_.speckleWindowSize = 0;
-    ui->horizontalSlider_speckle_window_size->setValue(sgbm_.speckleWindowSize);
+    sgbm_->setSpeckleWindowSize(0);// = 0;
+    ui->horizontalSlider_speckle_window_size->setValue(sgbm_->getSpeckleWindowSize());
 
-    sgbm_.speckleRange = 0;
-    ui->horizontalSlider_speckle_range->setValue(sgbm_.speckleRange);
+    sgbm_->setSpeckleRange(0);// = 0;
+    ui->horizontalSlider_speckle_range->setValue(sgbm_->getSpeckleRange());
 
-    sgbm_.disp12MaxDiff = -1;
-    ui->horizontalSlider_disp_12_max_diff->setValue(sgbm_.disp12MaxDiff);
+    sgbm_->setDisp12MaxDiff(-1);// = -1;
+    ui->horizontalSlider_disp_12_max_diff->setValue(sgbm_->getDisp12MaxDiff());
 
-    sgbm_.P1 = 120;
-    ui->horizontalSlider_P1->setValue(sgbm_.P1);
+    sgbm_->setP1(120);// = 120;
+    ui->horizontalSlider_P1->setValue(sgbm_->getP1());
 
-    sgbm_.P2 = 240;
-    ui->horizontalSlider_P2->setValue(sgbm_.P2);
+    sgbm_->setP2(240);// = 240;
+    ui->horizontalSlider_P2->setValue(sgbm_->getP2());
 
-    sgbm_.fullDP = false;
-    ui->horizontalSlider_use_full_dp->setValue(sgbm_.fullDP);
+    //sgbm_->fullDP = false;
+    //ui->horizontalSlider_use_full_dp->setValue(sgbm_->fullDP);
 }
 
 MainWindow::~MainWindow()
@@ -140,29 +141,52 @@ void MainWindow::compute_depth_map() {
         ui->label_depth_map->setText("Can't compute depth map: left and right images should be the same size");
         return;
     }
-
-    // we compute the depth map
-    cv::Mat disparity_16S;  // 16 bits, signed
-    sgbm_.operator()(left_image, right_image, disparity_16S);
-
-    // we convert the depth map to a QPixmap, to display it in the QUI
-    // first, we need to convert the disparity map to a more regular grayscale format
-    // then, we convert to RGB, and finally, we can convert to a QImage and then a QPixmap
-
-    // we normalize the values, so that they all fit in the range [0, 255]
-    cv::normalize(disparity_16S, disparity_16S, 0, 255, CV_MINMAX);
-
-    // we convert the values from 16 bits signed to 8 bits unsigned
-    cv::Mat disp(disparity_16S.rows, disparity_16S.cols, CV_8UC1);
-    for (int i=0; i<disparity_16S.rows; i++)
-        for (int j=0; j<disparity_16S.cols; j++)
-            disp.at<unsigned char>(i,j) = (unsigned char)disparity_16S.at<short>(i,j);
-
-    // we convert from gray to color
+	//thanhho to change sgbm algorithm
+	Ptr<StereoMatcher> right_matcher = createRightMatcher(sgbm_);
+	
+	Mat disp, right_disp, disp8;
+	Mat filtered_disp, disp_vis;
+	sgbm_->compute(left_image, right_image, disp);
+	right_matcher->compute(right_image, left_image, right_disp);
+	Ptr<DisparityWLSFilter> wls_filter;
+	wls_filter = createDisparityWLSFilter(sgbm_);
+	
+	//! [filtering]
+	double lambda = 8000.0;
+	double sigma = 1.5;
+	
+	wls_filter->setLambda(lambda);
+	wls_filter->setSigmaColor(sigma);
+	wls_filter->filter(disp, left_image, filtered_disp, right_disp);
+	//Visualize disparity map
+	getDisparityVis(filtered_disp, disp_vis, 10.0);
+	
+//    // we compute the depth map
+//    cv::Mat disparity_16S;  // 16 bits, signed
+//    sgbm_->compute(left_image, right_image, disparity_16S);
+//
+//    // we convert the depth map to a QPixmap, to display it in the QUI
+//    // first, we need to convert the disparity map to a more regular grayscale format
+//    // then, we convert to RGB, and finally, we can convert to a QImage and then a QPixmap
+//
+//    // we normalize the values, so that they all fit in the range [0, 255]
+//    cv::normalize(disparity_16S, disparity_16S, 0, 255, CV_MINMAX);
+//
+//    // we convert the values from 16 bits signed to 8 bits unsigned
+//    cv::Mat disp(disparity_16S.rows, disparity_16S.cols, CV_8UC1);
+//    for (int i=0; i<disparity_16S.rows; i++)
+//        for (int j=0; j<disparity_16S.cols; j++)
+//            disp.at<unsigned char>(i,j) = (unsigned char)disparity_16S.at<short>(i,j);
+//
+//    // we convert from gray to color
+	//cv::imwrite("./disp_color.png",disp_color);
+	cv::Mat disp_U8;
+	disp_vis.convertTo(disp_U8,CV_8UC1);
     cv::Mat disp_color;
-    cv::cvtColor(disp, disp_color, CV_GRAY2RGB);
+    cv::cvtColor(disp_U8, disp_color, CV_GRAY2RGB);
 
     // we finally can convert the image to a QPixmap and display it
+    //QImage disparity_image = QImage((unsigned char*) disp_color.data, disp_color.cols, disp_color.rows, QImage::Format_RGB888);
     QImage disparity_image = QImage((unsigned char*) disp_color.data, disp_color.cols, disp_color.rows, QImage::Format_RGB888);
     QPixmap disparity_pixmap = QPixmap::fromImage(disparity_image);
 
@@ -171,7 +195,7 @@ void MainWindow::compute_depth_map() {
     int max_height = std::min(ui->label_depth_map->maximumHeight(), disparity_image.height());
     ui->label_depth_map->setPixmap(disparity_pixmap.scaled(max_width, max_height, Qt::KeepAspectRatio));
 
-    ui->label_depth_map->setPixmap(disparity_pixmap);
+    //ui->label_depth_map->setPixmap(disparity_pixmap);
 }
 
 
@@ -181,7 +205,7 @@ void MainWindow::compute_depth_map() {
 
 void MainWindow::on_horizontalSlider_pre_filter_cap_valueChanged(int value)
 {
-    sgbm_.preFilterCap = value;
+    sgbm_->setPreFilterCap(value);
     compute_depth_map();
 }
 
@@ -212,7 +236,7 @@ void MainWindow::on_horizontalSlider_SAD_window_size_valueChanged(int value)
         ui->horizontalSlider_SAD_window_size->setValue(value);
     }
 
-    sgbm_.SADWindowSize = value;
+    sgbm_->setBlockSize(value);
     compute_depth_map();
 }
 
@@ -220,7 +244,7 @@ void MainWindow::on_horizontalSlider_SAD_window_size_valueChanged(int value)
 
 void MainWindow::on_horizontalSlider_min_disparity_valueChanged(int value)
 {
-    sgbm_.minDisparity = value;
+    sgbm_->setMinDisparity(value);
     compute_depth_map();
 }
 
@@ -247,7 +271,7 @@ void MainWindow::set_num_of_disparity_slider_to_multiple_16(int value) {
         ui->horizontalSlider_num_of_disparity->setValue(value);
     }
 
-    sgbm_.numberOfDisparities = value;
+    sgbm_->setNumDisparities(value);
     compute_depth_map();
 }
 
@@ -255,7 +279,7 @@ void MainWindow::set_num_of_disparity_slider_to_multiple_16(int value) {
 
 void MainWindow::on_horizontalSlider_uniqueness_ratio_valueChanged(int value)
 {
-    sgbm_.uniquenessRatio = value;
+    sgbm_->setUniquenessRatio(value);
     compute_depth_map();
 }
 
@@ -263,7 +287,7 @@ void MainWindow::on_horizontalSlider_uniqueness_ratio_valueChanged(int value)
 
 void MainWindow::on_horizontalSlider_speckle_window_size_valueChanged(int value)
 {
-    sgbm_.speckleWindowSize = value;
+    sgbm_->setSpeckleWindowSize(value);
     compute_depth_map();
 }
 
@@ -271,7 +295,7 @@ void MainWindow::on_horizontalSlider_speckle_window_size_valueChanged(int value)
 
 void MainWindow::on_horizontalSlider_speckle_range_valueChanged(int value)
 {
-    sgbm_.speckleRange = value;
+    sgbm_->setSpeckleRange(value);
     compute_depth_map();
 }
 
@@ -279,7 +303,7 @@ void MainWindow::on_horizontalSlider_speckle_range_valueChanged(int value)
 
 void MainWindow::on_horizontalSlider_disp_12_max_diff_valueChanged(int value)
 {
-    sgbm_.disp12MaxDiff = value;
+    sgbm_->setDisp12MaxDiff(value);
     compute_depth_map();
 }
 
@@ -289,7 +313,7 @@ void MainWindow::on_horizontalSlider_disp_12_max_diff_valueChanged(int value)
 /// parallel).
 
 void MainWindow::on_horizontalSlider_P1_valueChanged(int value) {
-  sgbm_.P1 = value;
+  sgbm_->setP1(value);
   compute_depth_map();
 }
 
@@ -304,12 +328,12 @@ void MainWindow::on_horizontalSlider_P1_valueChanged(int value) {
 /// (like 8*number_of_image_channels*SADWindowSize*SADWindowSize and
 /// 32*number_of_image_channels*SADWindowSize*SADWindowSize , respectively).
 void MainWindow::on_horizontalSlider_P2_valueChanged(int value) {
-  sgbm_.P2 = value;
+  sgbm_->setP2(value);
   compute_depth_map();
 }
 
 
 void MainWindow::on_horizontalSlider_use_full_dp_valueChanged(int value) {
-  sgbm_.fullDP = value;
+  //sgbm_.fullDP = value;
   compute_depth_map();
 }

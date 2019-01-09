@@ -13,10 +13,22 @@
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/imgproc.hpp"
+
+#include "opencv2/imgcodecs.hpp"
+
+#include "opencv2/highgui.hpp"
+
+#include "opencv2/core/utility.hpp"
+
+
+
+#include "opencv2/ximgproc.hpp"
 
 #include <QMainWindow>
 #include <QFileDialog>
-
+using namespace cv;
+using namespace cv::ximgproc;
 namespace Ui {
 class MainWindow;
 }
@@ -68,7 +80,8 @@ private:
 
     // the object that holds the parameters for the semi-global
     // block-matching algorithm
-    cv::StereoSGBM sgbm_;
+    //cv::StereoSGBM sgbm_;
+    cv::Ptr<cv::StereoSGBM> sgbm_;
 
     void compute_depth_map();  // compute depth map with OpenCV
 
