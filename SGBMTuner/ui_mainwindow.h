@@ -127,7 +127,7 @@ public:
         horizontalSlider_speckle_window_size->setObjectName(QStringLiteral("horizontalSlider_speckle_window_size"));
         sizePolicy.setHeightForWidth(horizontalSlider_speckle_window_size->sizePolicy().hasHeightForWidth());
         horizontalSlider_speckle_window_size->setSizePolicy(sizePolicy);
-        horizontalSlider_speckle_window_size->setMaximum(250);
+        horizontalSlider_speckle_window_size->setMaximum(500);
         horizontalSlider_speckle_window_size->setOrientation(Qt::Horizontal);
 
         gridLayout_buttons->addWidget(horizontalSlider_speckle_window_size, 8, 1, 1, 1);
@@ -252,7 +252,7 @@ public:
         sizePolicy.setHeightForWidth(horizontalSlider_speckle_range->sizePolicy().hasHeightForWidth());
         horizontalSlider_speckle_range->setSizePolicy(sizePolicy);
         horizontalSlider_speckle_range->setMinimum(0);
-        horizontalSlider_speckle_range->setMaximum(50);
+        horizontalSlider_speckle_range->setMaximum(250);
         horizontalSlider_speckle_range->setOrientation(Qt::Horizontal);
 
         gridLayout_buttons->addWidget(horizontalSlider_speckle_range, 9, 1, 1, 1);
@@ -309,8 +309,8 @@ public:
 
         horizontalSlider_P2 = new QSlider(centralWidget);
         horizontalSlider_P2->setObjectName(QStringLiteral("horizontalSlider_P2"));
-        horizontalSlider_P2->setMaximum(11000);
-        horizontalSlider_P2->setSingleStep(10);
+        horizontalSlider_P2->setMaximum(17000);
+        horizontalSlider_P2->setSingleStep(100);
         horizontalSlider_P2->setOrientation(Qt::Horizontal);
 
         gridLayout_buttons->addWidget(horizontalSlider_P2, 6, 1, 1, 1);

@@ -16,35 +16,35 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // The default values used in OpenCV are defined here:
     // https://github.com/Itseez/opencv/blob/master/modules/calib3d/src/stereobm.cpp
-	sgbm_ = cv::StereoSGBM::create(0, 16, 3);
-    sgbm_->setPreFilterCap(42);// = 42;  // must be within 1 and 63
+	sgbm_ = cv::StereoSGBM::create(0, 160, 13, 4056, 16224, 1, 0, 15, 400, 200, 1);
+    //sgbm_->setPreFilterCap(42);// = 42;  // must be within 1 and 63
     ui->horizontalSlider_pre_filter_cap->setValue(sgbm_->getPreFilterCap());
 
-    sgbm_->setBlockSize(11);// = 11;  // must be odd, be within 5..255 and be not larger than image width or height
+    //sgbm_->setBlockSize(11);// = 11;  // must be odd, be within 5..255 and be not larger than image width or height
     ui->horizontalSlider_SAD_window_size->setValue(sgbm_->getBlockSize());
 
-    sgbm_->setMinDisparity(0);// = -66;
+    //sgbm_->setMinDisparity(0);// = -66;
     ui->horizontalSlider_min_disparity->setValue(sgbm_->getMinDisparity());
 
-    sgbm_->setNumDisparities(12);// = 128;  // must be > 0 and divisible by 16
+    //sgbm_->setNumDisparities(12);// = 128;  // must be > 0 and divisible by 16
     ui->horizontalSlider_num_of_disparity->setValue(sgbm_->getNumDisparities());
 
-    sgbm_->setUniquenessRatio(15);// = 15;  // must be non-negative
+    //sgbm_->setUniquenessRatio(15);// = 15;  // must be non-negative
     ui->horizontalSlider_uniqueness_ratio->setValue(sgbm_->getUniquenessRatio());
 
-    sgbm_->setSpeckleWindowSize(0);// = 0;
+    //sgbm_->setSpeckleWindowSize(0);// = 0;
     ui->horizontalSlider_speckle_window_size->setValue(sgbm_->getSpeckleWindowSize());
 
-    sgbm_->setSpeckleRange(0);// = 0;
+    //sgbm_->setSpeckleRange(0);// = 0;
     ui->horizontalSlider_speckle_range->setValue(sgbm_->getSpeckleRange());
 
-    sgbm_->setDisp12MaxDiff(-1);// = -1;
+    //sgbm_->setDisp12MaxDiff(-1);// = -1;
     ui->horizontalSlider_disp_12_max_diff->setValue(sgbm_->getDisp12MaxDiff());
 
-    sgbm_->setP1(120);// = 120;
+    //sgbm_->setP1(120);// = 120;
     ui->horizontalSlider_P1->setValue(sgbm_->getP1());
 
-    sgbm_->setP2(240);// = 240;
+    //sgbm_->setP2(240);// = 240;
     ui->horizontalSlider_P2->setValue(sgbm_->getP2());
 
     //sgbm_->fullDP = false;
@@ -141,47 +141,12 @@ void MainWindow::compute_depth_map() {
         ui->label_depth_map->setText("Can't compute depth map: left and right images should be the same size");
         return;
     }
-	//thanhho to change sgbm algorithm
-	Ptr<StereoMatcher> right_matcher = createRightMatcher(sgbm_);
-	
-	Mat disp, right_disp, disp8;
-	Mat filtered_disp, disp_vis;
-	sgbm_->compute(left_image, right_image, disp);
-	right_matcher->compute(right_image, left_image, right_disp);
-	Ptr<DisparityWLSFilter> wls_filter;
-	wls_filter = createDisparityWLSFilter(sgbm_);
-	
-	//! [filtering]
-	double lambda = 8000.0;
-	double sigma = 1.5;
-	
-	wls_filter->setLambda(lambda);
-	wls_filter->setSigmaColor(sigma);
-	wls_filter->filter(disp, left_image, filtered_disp, right_disp);
-	//Visualize disparity map
-	getDisparityVis(filtered_disp, disp_vis, 10.0);
-	
-//    // we compute the depth map
-//    cv::Mat disparity_16S;  // 16 bits, signed
-//    sgbm_->compute(left_image, right_image, disparity_16S);
-//
-//    // we convert the depth map to a QPixmap, to display it in the QUI
-//    // first, we need to convert the disparity map to a more regular grayscale format
-//    // then, we convert to RGB, and finally, we can convert to a QImage and then a QPixmap
-//
-//    // we normalize the values, so that they all fit in the range [0, 255]
-//    cv::normalize(disparity_16S, disparity_16S, 0, 255, CV_MINMAX);
-//
-//    // we convert the values from 16 bits signed to 8 bits unsigned
-//    cv::Mat disp(disparity_16S.rows, disparity_16S.cols, CV_8UC1);
-//    for (int i=0; i<disparity_16S.rows; i++)
-//        for (int j=0; j<disparity_16S.cols; j++)
-//            disp.at<unsigned char>(i,j) = (unsigned char)disparity_16S.at<short>(i,j);
-//
-//    // we convert from gray to color
-	//cv::imwrite("./disp_color.png",disp_color);
+	//thanhho to change sgbm algorithm (using DSP guy)
+	cv::Mat mat_disp;
+	sgbm_->compute(left_image, right_image, mat_disp);
+
 	cv::Mat disp_U8;
-	disp_vis.convertTo(disp_U8,CV_8UC1);
+	mat_disp.convertTo(disp_U8,CV_8UC1);
     cv::Mat disp_color;
     cv::cvtColor(disp_U8, disp_color, CV_GRAY2RGB);
 
